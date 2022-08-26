@@ -21,7 +21,7 @@ def get_subject_teachers(id, client)
       puts output
     end
   end
-  def get_class_subjects(id, client)
+def get_class_subjects(id, client)
     f = "SELECT c.name class, 
     s.name subject , t.first_name name, t.middle_name ,t.last_name
   FROM classes_erik c 
@@ -42,12 +42,12 @@ def get_subject_teachers(id, client)
 
       results.each do |row|
         output += "\n#{row["subject"]} (#{row["name"]} #{row["middle_name"][0]}. #{row["last_name"]})"
-      end
-
-puts output
-   
     end
+
+      puts output
+   
   end
+end
 
   def get_teachers_list_by_letter(letter, client)
     letter = letter.upcase
@@ -68,7 +68,7 @@ puts output
         output += "\n#{row["first_name"]} #{row["middle_name"][0]}. #{row["last_name"]} (#{row["name"]})"
       end
 
-puts output
+      puts output
    
     end
   end
