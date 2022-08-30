@@ -67,6 +67,30 @@ def set_md5(id, client)
   end
 end
 
+def get_class_info(id, client)
+  f = "SELECT t.id, c.name class, 
+  t.first_name name, t.middle_name ,t.last_name, c.responsible_teacher_id
+FROM classes_erik c 
+JOIN teachers_classes_erik tc 
+  ON tc.class_id = c.id 
+JOIN teachers_erik t 
+  ON t.id = tc.teacher_id 
+  WHERE c.id = #{id};"
+  
+results = client.query(f).to_a
+r_teacher = results.find { |el| el['id']==el['responsible_teacher_id'] }
+    
+if results.count.zero?
+  puts "Class with ID #{id} was not found."
+else
+  output = "Class: #{results[0]['class']}\nResponsible teacher: #{r_teacher['name']} #{r_teacher['middle_name']} #{r_teacher['last_name']}\n"
+  output += "Involved teachers:"
+  results.each do |x|
+    output += " #{x['name']} #{x['middle_name']} #{x['last_name']},"
+  end
+  puts output.chop!
+end
+end
 
 
   

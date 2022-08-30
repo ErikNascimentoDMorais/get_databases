@@ -9,5 +9,5 @@ get_subject_teachers(2, client)
 get_class_subjects(1, client)
 get_teachers_list_by_letter("C",client)
 set_md5(1,client)
-
+get_class_info(1,client)
 client.close
