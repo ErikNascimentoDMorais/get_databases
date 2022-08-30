@@ -92,5 +92,16 @@ else
 end
 end
 
+def get_teachers_by_year(year, client)
+  f = "SELECT YEAR(birth_date),first_name, middle_name ,last_name 
+  FROM teachers_erik 
+  WHERE YEAR(birth_date) = #{year};"
+  results = client.query(f).to_a
+  output = "Teachers born in #{year}:"
+  results.each do |x|
+    output += " #{x['first_name']} #{x['middle_name']} #{x['last_name']},"
 
+  end
+  puts output.chop!
+end
   
