@@ -14,7 +14,7 @@ def get_subject_teachers(id, client)
       end
       puts output
     end
-  end
+end
 
 def get_class_subjects(id, client)
     f = "SELECT c.name class, 
@@ -34,12 +34,12 @@ def get_class_subjects(id, client)
       output = "Class: #{results[0]["class"]}\nSubjects:"
       results.each do |row|
         output += "\n#{row["subject"]} (#{row["name"]} #{row["middle_name"][0]}. #{row["last_name"]})"
+      end
+    puts output
     end
-      puts output
-  end
 end
 
-  def get_teachers_list_by_letter(letter, client)
+def get_teachers_list_by_letter(letter, client)
     letter = letter.upcase
     f = "SELECT s.name ,t.first_name,t.middle_name,t.last_name  
     FROM teachers_erik t 
@@ -56,7 +56,7 @@ end
       end
       puts output
     end
-  end
+end
 
 def set_md5(id, client)
   f = "SELECT * from teachers_erik"
@@ -64,7 +64,7 @@ def set_md5(id, client)
   results.each do |el|
     o = Digest::MD5.hexdigest "#{el['first_name']}#{el['middle_name']}#{el['last_name']}#{el['birth_date']}#{el['subjects_id']}#{el['current_age']}"
     client.query("UPDATE teachers_erik SET md5 = '#{o}' WHERE id = #{el['id']}")
-  end
+end
 end
 
 def get_class_info(id, client)
