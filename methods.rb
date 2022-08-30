@@ -1,5 +1,3 @@
-
-
 def get_subject_teachers(id, client)
     f = "SELECT s.name ,t.first_name,t.middle_name,t.last_name  
     FROM teachers_erik t 
@@ -21,6 +19,7 @@ def get_subject_teachers(id, client)
       puts output
     end
   end
+
 def get_class_subjects(id, client)
     f = "SELECT c.name class, 
     s.name subject , t.first_name name, t.middle_name ,t.last_name
@@ -73,7 +72,15 @@ end
     end
   end
 
-
+def set_md5(id, client)
+  
+  f = "SELECT * from teachers_erik"
+  results = client.query(f).to_a
+  results.each do |el|
+    o = Digest::MD5.hexdigest "#{el['first_name']}#{el['middle_name']}#{el['last_name']}#{el['birth_date']}#{el['subjects_id']}#{el['current_age']}"
+    client.query("UPDATE teachers_erik SET md5 = '#{o}' WHERE id = #{el['id']}")
+  end
+end
 
 
 
