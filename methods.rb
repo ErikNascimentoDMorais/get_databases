@@ -93,6 +93,9 @@ end
 end
 
 def get_teachers_by_year(year, client)
+  if results.count.zero?
+    puts "Teacher has born in #{year} was not found."
+  else
   f = "SELECT YEAR(birth_date),first_name, middle_name ,last_name 
   FROM teachers_erik 
   WHERE YEAR(birth_date) = #{year};"
@@ -100,7 +103,7 @@ def get_teachers_by_year(year, client)
   output = "Teachers born in #{year}:"
   results.each do |x|
     output += " #{x['first_name']} #{x['middle_name']} #{x['last_name']},"
-
+  end
   end
   puts output.chop!
 end
