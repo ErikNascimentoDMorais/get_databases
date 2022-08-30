@@ -8,14 +8,10 @@ def get_subject_teachers(id, client)
     if results.count.zero?
       puts "Teacher with ID #{id} was not found."
     else
-     
-     
       output = "Subject: #{results[0]["name"]}\nTeacher:"
-
       results.each do |row|
         output += "\n#{row["first_name"]} #{row["middle_name"]} #{row["last_name"]}"
       end
-      
       puts output
     end
   end
@@ -35,16 +31,11 @@ def get_class_subjects(id, client)
     if results.count.zero?
       puts "Teacher with ID #{id} was not found."
     else
-     
- 
       output = "Class: #{results[0]["class"]}\nSubjects:"
-
       results.each do |row|
         output += "\n#{row["subject"]} (#{row["name"]} #{row["middle_name"][0]}. #{row["last_name"]})"
     end
-
       puts output
-   
   end
 end
 
@@ -59,21 +50,15 @@ end
     if results.count.zero?
       puts "Teacher with ID #{id} was not found."
     else
-     
- 
       output = ""
-     
       results.each do |row|
         output += "\n#{row["first_name"]} #{row["middle_name"][0]}. #{row["last_name"]} (#{row["name"]})"
       end
-
       puts output
-   
     end
   end
 
 def set_md5(id, client)
-  
   f = "SELECT * from teachers_erik"
   results = client.query(f).to_a
   results.each do |el|
