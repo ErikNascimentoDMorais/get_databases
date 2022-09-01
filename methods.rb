@@ -110,18 +110,18 @@ end
   
 def random_date(date_begin,date_end,client)
   output = rand(Date.parse(date_begin)..Date.parse(date_end)).to_s
-  puts output
+  return output
 end
 
 def random_last_names(n,client)
   f = "SELECT last_name
   FROM last_names"
-  @res = @res ? @res : client.query(f).to_a
+  @res = @res ? @res : client.query(f).to_a.map(&:values).map {|el| el[0]}
   result =[]
   n.times do 
    result << @res.sample
   end
-  puts result
+  return result
 end
 
 def random_first_names(n,client)
@@ -130,10 +130,29 @@ def random_first_names(n,client)
   UNION 
   SELECT names f_name
   FROM female_names"
-  @res2 = @res2 ? @res2 : client.query(f).to_a.map(&:values)
+  @res2 = @res2 ? @res2 : client.query(f).to_a.map(&:values).map {|el| el[0]}
   result =[]
   n.times do
     result << @res2.sample
   end
-  puts result
+  return result
+end
+
+def random_people(n,client)
+  rfn = random_first_names(n,client)
+  rln = random_last_names(n,client)
+  rbd = [] 
+  n.times{rbd << random_date("1910-01-01","2022-12-31",client)}
+  res = []
+  rfn.each_with_index do |row, ind|
+    res << [row, rln[ind], rbd[ind]]
+  end
+  res.each_slice(20000) do |res_|
+    insert = "INSERT INTO random_people_erik(first_name,last_name,birth_date)
+      VALUES "
+      res_.each do |fn_ln_bd|
+      insert += "(\"#{fn_ln_bd[0]}\",\"#{fn_ln_bd[1]}\",\"#{fn_ln_bd[2]}\"),"
+      end
+      client.query(insert.chop!)
+  end
 end
