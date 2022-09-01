@@ -108,3 +108,32 @@ def get_teachers_by_year(year, client)
   puts output.chop!
 end
   
+def random_date(date_begin,date_end,client)
+  output = rand(Date.parse(date_begin)..Date.parse(date_end)).to_s
+  puts output
+end
+
+def random_last_names(n,client)
+  f = "SELECT last_name
+  FROM last_names"
+  @res = @res ? @res : client.query(f).to_a
+  result =[]
+  n.times do 
+   result << @res.sample
+  end
+  puts result
+end
+
+def random_first_names(n,client)
+  f = "SELECT FirstName m_name
+  FROM male_names 
+  UNION 
+  SELECT names f_name
+  FROM female_names"
+  @res2 = @res2 ? @res2 : client.query(f).to_a.map(&:values)
+  result =[]
+  n.times do
+    result << @res2.sample
+  end
+  puts result
+end
