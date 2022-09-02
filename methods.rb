@@ -156,3 +156,15 @@ def random_people(n,client)
       client.query(insert.chop!)
   end
 end
+
+def clean_name(client)
+    f = "select school_name,address,city,state,zip from montana_public_district_report_card;"
+    r = client.query(f).to_a
+    output = "INSERT INTO montana_public_district_report_card__uniq_dist_erik(clean_name,name,address,city,state,zip) VALUES"
+    r.each do |x|
+    r2 = x['school_name'].gsub(/\b(Elem|El)\b/,'Elementary School').gsub(/\bH ?S\b/,'High School').
+    gsub(/K-12( Schools| Schls)?/,'Public School').gsub(/(\b\w+\b) \1/,'\1')
+    output += "(\"#{r2} District\" ,\'#{x['school_name']}\',\'#{x['address']}\',\'#{x['city']}\',\'#{x['state']}\',\'#{x['zip']}\'),"  
+end
+client.query(output.chop!)
+end
