@@ -149,11 +149,11 @@ def random_people(n,client)
   end
   res.each_slice(20000) do |res_|
     insert = "INSERT INTO random_people_erik(first_name,last_name,birth_date)
-      VALUES "
-      res_.each do |fn_ln_bd|
-      insert += "(\"#{fn_ln_bd[0]}\",\"#{fn_ln_bd[1]}\",\"#{fn_ln_bd[2]}\"),"
-      end
-      client.query(insert.chop!)
+    VALUES "
+    res_.each do |fn_ln_bd|
+        insert += "(\"#{fn_ln_bd[0]}\",\"#{fn_ln_bd[1]}\",\"#{fn_ln_bd[2]}\"),"
+    end
+    client.query(insert.chop!)
   end
 end
 
@@ -162,9 +162,51 @@ def clean_name(client)
     r = client.query(f).to_a
     output = "INSERT INTO montana_public_district_report_card__uniq_dist_erik(clean_name,name,address,city,state,zip) VALUES"
     r.each do |x|
-    r2 = x['school_name'].gsub(/\b(Elem|El)\b/,'Elementary School').gsub(/\bH ?S\b/,'High School').
-    gsub(/K-12( Schools| Schls)?/,'Public School').gsub(/(\b\w+\b) \1/,'\1')
-    output += "(\"#{r2} District\" ,\'#{x['school_name']}\',\'#{x['address']}\',\'#{x['city']}\',\'#{x['state']}\',\'#{x['zip']}\'),"  
+      r2 = x['school_name'].gsub(/\b(Elem|El)\b/,'Elementary School').gsub(/\bH ?S\b/,'High School').
+      gsub(/K-12( Schools| Schls)?/,'Public School').gsub(/(\b\w+\b) \1/,'\1')
+      output += "(\"#{r2} District\" ,\'#{x['school_name']}\',\'#{x['address']}\',\'#{x['city']}\',\'#{x['state']}\',\'#{x['zip']}\'),"  
+    end
+  client.query(output.chop!)
 end
-client.query(output.chop!)
+
+def clean_office_names(client)
+  f = "SELECT candidate_office_name FROM hle_dev_test_candidates"
+  q = client.query(f).to_a
+  name = []
+  clean_name = []
+  output = "INSERT INTO hle_dev_test_erik_nascimento(candidate_office_name,clean_name,sentence) VALUES"    
+  q.each do |x|
+      name = x['candidate_office_name']
+      clean_name = name.gsub("Twp","Township").gsub("Hwy","Highway").gsub(".","")
+      if name.split("/").count >= 3
+        clean_name = clean_name.split("/")
+        clean_name = clean_name.map(&:downcase)
+        clean_name[-1] = clean_name[-1].split(" ").map(&:capitalize).join(" ")
+        clean_name.unshift(clean_name[2]).delete_at(-1)
+        clean_name = clean_name.join(" ").gsub(/(\b\w+\b) \1/i,'\1').split(" ").insert(3,"and").join(" ")
+      elsif name.count("/") >= 1
+        clean_name = clean_name.split("/")
+        clean_name[0] = clean_name[0].split(" ").map(&:downcase).join(" ")
+        clean_name = clean_name.reverse.join(" ").gsub(/(\b\w+\b) \1/i,'\1').strip
+        if name.include?(',')
+          clean_name = clean_name.split(',')
+          clean_name[-1] = clean_name[-1].strip
+          clean_name[-1] = clean_name[-1].split(" ").map(&:capitalize).join(" ")
+          clean_name[-1] = "(#{clean_name[-1]})"
+          clean_name = clean_name.join(" ")
+         end
+      else
+       if name.include?(',')
+        clean_name = clean_name.split(',')
+        clean_name[-1] = clean_name[-1].strip
+        clean_name[-1] = "(#{clean_name[-1]})"
+        clean_name[0] = clean_name[0].downcase
+        clean_name = clean_name.join(" ")
+       else
+        clean_name = name.downcase.gsub(".","")
+       end
+      end
+      output += "(\"#{name}\",\"#{clean_name}\",\"The candidate is running for the #{clean_name} office.\"),"
+  end
+  client.query(output.chop!)
 end
