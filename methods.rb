@@ -210,3 +210,16 @@ def clean_office_names(client)
   end
   client.query(output.chop!)
 end
+
+def noko_giri_covid_chart(document,client)
+  table = document.at("tbody").text.split("\n").join(" ").strip.split("  ")
+  output = "INSERT INTO covid_test_chart_erik(week,spec_tested_total,pos_total,spec_tested_between_0_and_4_years,pos_between_0_and_4_years,spec_tested_between_5_and_17_years,
+  pos_between_5_and_17_years,spec_tested_between_18_and_49_years,pos_between_18_and_49_years,spec_tested_between_50_and_64_years,
+  pos_between_50_and_64_years,spec_tested_over_65_years,pos_over_65_years) VALUES"
+  table.each do |x|
+    x = x.split(" ")
+    x.map!{|y|y.gsub(",","")}
+    output+= "(#{x[0]},#{x[1]},'#{x[2]}',#{x[3]},'#{x[4]}',#{x[5]},'#{x[6]}',#{x[7]},'#{x[8]}',#{x[9]},'#{x[10]}',#{x[11]},'#{x[12]}'),"
+  end
+  client.query(output.chop!)
+end
