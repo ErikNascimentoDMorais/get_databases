@@ -211,7 +211,8 @@ def clean_office_names(client)
   client.query(output.chop!)
 end
 
-def noko_giri_covid_chart(document,client)
+def noko_giri_covid_chart(client)
+  document = Nokogiri::HTML(open("https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/01152021/specimens-tested.html"))
   table = document.at("tbody").text.split("\n").join(" ").strip.split("  ")
   output = "INSERT INTO covid_test_chart_erik(week,spec_tested_total,pos_total,spec_tested_between_0_and_4_years,pos_between_0_and_4_years,spec_tested_between_5_and_17_years,
   pos_between_5_and_17_years,spec_tested_between_18_and_49_years,pos_between_18_and_49_years,spec_tested_between_50_and_64_years,
